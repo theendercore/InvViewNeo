@@ -1,4 +1,3 @@
-/*
 package net.razorplay.invview_forge.container;
 
 import net.minecraft.server.level.ServerPlayer;
@@ -258,4 +257,3 @@ public class PlayerCuriosInventoryScreenHandler extends AbstractContainerMenu {
         return copyOfSourceStack;
     }
 }
-*/

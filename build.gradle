@@ -21,6 +21,10 @@ repositories {
             includeGroup "maven.modrinth"
         }
     }
+    maven {
+        name = "Illusive Soulworks maven"
+        url = "https://maven.theillusivec4.top/"
+    }
 }
 
 base {
@@ -97,8 +101,10 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 
 dependencies {
-//    runtimeOnly ("top.theillusivec4.curios:curios-forge:6.1.0+1.20.2")//CuriosForge
-//    compileOnly ("top.theillusivec4.curios:curios-forge:6.1.0+1.20.2:api")//CuriosApi
+    // Compile against only the API artifact
+    compileOnly "top.theillusivec4.curios:curios-neoforge:${curios_version}:api"
+    // Use the full Curios API jar at runtime
+    runtimeOnly "top.theillusivec4.curios:curios-neoforge:${curios_version}"
     implementation ("maven.modrinth:travelersbackpack:D6UvPNN2") //v10.1.19
 
 }

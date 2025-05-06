@@ -22,15 +22,21 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ChestMenu;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.level.dimension.DimensionType;
+import net.neoforged.fml.ModList;
+import net.razorplay.invview_forge.container.PlayerCuriosInventoryScreenHandler;
 import net.razorplay.invview_forge.container.PlayerEnderChestScreenHandler;
 import net.razorplay.invview_forge.container.PlayerInventoryScreenHandler;
 import org.jetbrains.annotations.NotNull;
+import top.theillusivec4.curios.api.CuriosApi;
+import top.theillusivec4.curios.api.type.inventory.ICurioStacksHandler;
 
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class InvViewCommands {
     private static final String TARGET_ID = "target";
-//    private static final String CURIOS_ID = "curios";
+    private static final String CURIOS_ID = "curios";
+    private static final String TB_ID = "travelersbackpack";
 
     public InvViewCommands(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands.literal("view").requires(player -> player.hasPermission(2))
@@ -40,20 +46,20 @@ public class InvViewCommands {
                         .then(Commands.literal("echest")
                                 .then(Commands.argument(TARGET_ID, GameProfileArgument.gameProfile())
                                         .executes(this::executeEnderChestCheck)))
-             /*   .then((ModList.get().isLoaded(CURIOS_ID) ?
-                        Commands.literal(CURIOS_ID)
-                                .then(Commands.argument(TARGET_ID, GameProfileArgument.gameProfile())
-                                        .executes(this::executeCuriosCheck)
-                                ) : Commands.literal(""))
-                )*/
+                        .then((ModList.get().isLoaded(CURIOS_ID) ?
+                                Commands.literal(CURIOS_ID)
+                                        .then(Commands.argument(TARGET_ID, GameProfileArgument.gameProfile())
+                                                .executes(this::executeCuriosCheck)
+                                        ) : Commands.literal(""))
+                        )
                 /*.then((ModList.get().isLoaded("inventorio") ?
                         Commands.literal("inventorio")
                                 .then(Commands.argument(TARGET_ID, GameProfileArgument.gameProfile())
                                         .executes(context -> executeInventorioCheck(context, (ServerPlayer) context.getSource().getEntity()))
                                 ) : Commands.literal(""))
                 )*/
-              /*  .then((ModList.get().isLoaded("travelersbackpack") ?
-                        Commands.literal("travelersbackpack")
+              /*  .then((ModList.get().isLoaded(TB_ID) ?
+                        Commands.literal(TB_ID)
                                 .then(Commands.argument(TARGET_ID, EntityArgument.player())
                                         .executes(context -> executeTravelersBackPackCheck(context, EntityArgument.getPlayer(context, TARGET_ID)))
                                 ) : Commands.literal(""))
@@ -149,7 +155,7 @@ public class InvViewCommands {
         return 1;
     }*/
 
-   /* private int executeCuriosCheck(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+    private int executeCuriosCheck(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         ServerPlayer targetPlayer = getRequestedPlayer(context);
         ServerPlayer player = (ServerPlayer) context.getSource().getEntity();
 
@@ -206,7 +212,7 @@ public class InvViewCommands {
         }
 
         return 1;
-    }*/
+    }
 
     private int executeEnderChestCheck(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         ServerPlayer targetPlayer = getRequestedPlayer(context);
