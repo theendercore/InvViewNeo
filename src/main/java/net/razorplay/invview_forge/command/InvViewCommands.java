@@ -5,11 +5,8 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.serialization.Dynamic;
-import com.tiviacz.travelersbackpack.capability.CapabilityUtils;
-import com.tiviacz.travelersbackpack.util.Reference;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.commands.arguments.GameProfileArgument;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
@@ -19,51 +16,49 @@ import net.minecraft.server.level.ClientInformation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.MenuProvider;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ChestMenu;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.level.dimension.DimensionType;
-import net.minecraftforge.fml.ModList;
-import net.razorplay.invview_forge.container.*;
+import net.razorplay.invview_forge.container.PlayerEnderChestScreenHandler;
+import net.razorplay.invview_forge.container.PlayerInventoryScreenHandler;
 import org.jetbrains.annotations.NotNull;
-import top.theillusivec4.curios.api.CuriosApi;
-import top.theillusivec4.curios.api.type.inventory.ICurioStacksHandler;
 
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.Optional;
 
 public class InvViewCommands {
     private static final String TARGET_ID = "target";
-    private static final String CURIOS_ID = "curios";
+//    private static final String CURIOS_ID = "curios";
 
     public InvViewCommands(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands.literal("view").requires(player -> player.hasPermission(2))
-                .then(Commands.literal("inv")
-                        .then(Commands.argument(TARGET_ID, GameProfileArgument.gameProfile())
-                                .executes(this::executeInventoryCheck)))
-                .then(Commands.literal("echest")
-                        .then(Commands.argument(TARGET_ID, GameProfileArgument.gameProfile())
-                                .executes(this::executeEnderChestCheck)))
-                .then((ModList.get().isLoaded(CURIOS_ID) ?
+                        .then(Commands.literal("inv")
+                                .then(Commands.argument(TARGET_ID, GameProfileArgument.gameProfile())
+                                        .executes(this::executeInventoryCheck)))
+                        .then(Commands.literal("echest")
+                                .then(Commands.argument(TARGET_ID, GameProfileArgument.gameProfile())
+                                        .executes(this::executeEnderChestCheck)))
+             /*   .then((ModList.get().isLoaded(CURIOS_ID) ?
                         Commands.literal(CURIOS_ID)
                                 .then(Commands.argument(TARGET_ID, GameProfileArgument.gameProfile())
                                         .executes(this::executeCuriosCheck)
                                 ) : Commands.literal(""))
-                )
+                )*/
                 /*.then((ModList.get().isLoaded("inventorio") ?
                         Commands.literal("inventorio")
                                 .then(Commands.argument(TARGET_ID, GameProfileArgument.gameProfile())
                                         .executes(context -> executeInventorioCheck(context, (ServerPlayer) context.getSource().getEntity()))
                                 ) : Commands.literal(""))
                 )*/
-                .then((ModList.get().isLoaded("travelersbackpack") ?
+              /*  .then((ModList.get().isLoaded("travelersbackpack") ?
                         Commands.literal("travelersbackpack")
                                 .then(Commands.argument(TARGET_ID, EntityArgument.player())
                                         .executes(context -> executeTravelersBackPackCheck(context, EntityArgument.getPlayer(context, TARGET_ID)))
                                 ) : Commands.literal(""))
-                )/*.then((ModList.get().isLoaded("quark") ?
+                )*/
+            /*.then((ModList.get().isLoaded("quark") ?
                         Commands.literal("quark-backpack")
                                 .then(Commands.argument(TARGET_ID, EntityArgument.player())
                                         .executes(context -> executeQuarkBackPackCheck(context, EntityArgument.getPlayer(context, TARGET_ID)))
@@ -108,17 +103,17 @@ public class InvViewCommands {
     }*/
 
 
-    private int executeTravelersBackPackCheck(CommandContext<CommandSourceStack> context, ServerPlayer targetPlayer) {
-        if (CapabilityUtils.isWearingBackpack(targetPlayer)) {
+   /* private int executeTravelersBackPackCheck(CommandContext<CommandSourceStack> context, ServerPlayer targetPlayer) {
+        if (AttachmentUtils.isWearingBackpack(targetPlayer)) {
             if (!context.getSource().getLevel().isClientSide) {
                 ServerPlayer player = (ServerPlayer) context.getSource().getEntity();
-                player.openMenu(CapabilityUtils.getBackpackInv(targetPlayer), packetBuffer -> packetBuffer.writeByte(Reference.WEARABLE_SCREEN_ID));
+                player.openMenu(AttachmentUtils.getBackpackWrapper(targetPlayer), packetBuffer -> packetBuffer.writeByte(Reference.WEARABLE_SCREEN_ID));
             }
         } else {
             context.getSource().getEntity().sendSystemMessage(Component.literal("The player does not have a currently equipped backpack."));
         }
         return 1;
-    }
+    }*/
 
 
     /*private int executeInventorioCheck(CommandContext<CommandSourceStack> context, ServerPlayer player) throws CommandSyntaxException {
@@ -154,7 +149,7 @@ public class InvViewCommands {
         return 1;
     }*/
 
-    private int executeCuriosCheck(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+   /* private int executeCuriosCheck(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         ServerPlayer targetPlayer = getRequestedPlayer(context);
         ServerPlayer player = (ServerPlayer) context.getSource().getEntity();
 
@@ -211,7 +206,7 @@ public class InvViewCommands {
         }
 
         return 1;
-    }
+    }*/
 
     private int executeEnderChestCheck(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         ServerPlayer targetPlayer = getRequestedPlayer(context);
@@ -300,10 +295,10 @@ public class InvViewCommands {
 
         if (requestedPlayer == null) {
             requestedPlayer = minecraftServer.getPlayerList().getPlayerForLogin(requestedProfile, ClientInformation.createDefault());
-            CompoundTag compound = minecraftServer.getPlayerList().load(requestedPlayer);
-            if (compound != null) {
+            Optional<CompoundTag> compound = minecraftServer.getPlayerList().load(requestedPlayer);
+            if (compound.isPresent() && compound.get() != null) {
                 ServerLevel world = minecraftServer.getLevel(
-                        DimensionType.parseLegacy(new Dynamic<>(NbtOps.INSTANCE, compound.get("Dimension")))
+                        DimensionType.parseLegacy(new Dynamic<>(NbtOps.INSTANCE, compound.get().get("Dimension")))
                                 .result().get());
 
                 if (world != null) {

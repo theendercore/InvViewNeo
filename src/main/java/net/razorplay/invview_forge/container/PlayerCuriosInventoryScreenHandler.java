@@ -1,3 +1,4 @@
+/*
 package net.razorplay.invview_forge.container;
 
 import net.minecraft.server.level.ServerPlayer;
@@ -8,7 +9,6 @@ import net.minecraft.world.item.ItemStack;
 import net.razorplay.invview_forge.InvView_Forge;
 import org.jetbrains.annotations.NotNull;
 import top.theillusivec4.curios.api.CuriosApi;
-import top.theillusivec4.curios.api.type.ISlotType;
 import top.theillusivec4.curios.api.type.inventory.ICurioStacksHandler;
 
 import java.util.ArrayList;
@@ -258,3 +258,4 @@ public class PlayerCuriosInventoryScreenHandler extends AbstractContainerMenu {
         return copyOfSourceStack;
     }
 }
+*/

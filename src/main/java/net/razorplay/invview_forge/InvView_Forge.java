@@ -6,10 +6,11 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtIo;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.storage.LevelResource;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.neoforge.common.NeoForge;
+import net.razorplay.invview_forge.event.ModEvents;
 import org.apache.logging.log4j.LogManager;
 import org.slf4j.Logger;
 
@@ -21,13 +22,10 @@ public class InvView_Forge {
     public static final String MOD_ID = "inv_view_forge";
     private static final Logger LOGGER = LogUtils.getLogger();
 
-    public InvView_Forge() {
-        IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
-
-        MinecraftForge.EVENT_BUS.register(this);
+    public InvView_Forge(IEventBus modEventBus, ModContainer modContainer) {
+        NeoForge.EVENT_BUS.register(ModEvents.class);
+//        NeoForge.EVENT_BUS.register(this);
     }
-
-
 
 
     public static void savePlayerData(ServerPlayer player) {
